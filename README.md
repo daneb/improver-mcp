@@ -17,7 +17,7 @@ npm install mcp-prompt-collector
 ### Option 2: From Source
 
 ```bash
-git clone https://github.com/your-username/improver-mcp.git
+git clone https://github.com/daneb/improver-mcp.git
 cd improver-mcp
 npm install
 npm run build
@@ -36,7 +36,7 @@ npm run build
        "mcp-prompt-collector": {
          "command": "mcp-prompt-collector",
          "env": {
-           "HOME": "/Users/your-username"
+           "HOME": "/Users/daneb"
          }
        }
      }
@@ -51,7 +51,7 @@ npm run build
          "command": "/path/to/your/node",
          "args": ["/path/to/improver-mcp/dist/index.js"],
          "env": {
-           "HOME": "/Users/your-username"
+           "HOME": "/Users/daneb"
          }
        }
      }
