@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+.env
+.env.local
+.vscode/
+.idea/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Config directories
+.mcp-prompt-collector/
