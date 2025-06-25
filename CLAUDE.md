@@ -8,7 +8,7 @@
 
 ### One-Line Description
 
-> An MCP server that intercepts, stores, and analyzes all Claude Desktop prompts to provide actionable insights for improving prompt engineering skills.
+> An MCP server that logs, stores, and analyzes Claude Desktop prompts through explicit user interaction to provide actionable insights for improving prompt engineering skills.
 
 ### Target Audience
 
@@ -22,7 +22,7 @@
 
 ### Primary Features (Must-Have)
 
-1. **Transparent Prompt Interception** - Seamlessly captures all prompts sent through Claude Desktop without disrupting workflow
+1. **Explicit Prompt Logging** - Provides tools for users to manually log their prompts and interactions for analysis
 2. **Comprehensive Prompt Storage** - Stores full conversation history including prompts, responses, timestamps, and metadata in a local SQLite database
 3. **Quality Analysis Engine** - Evaluates prompts for structure, clarity, specificity, bias, and effectiveness using configurable metrics
 4. **Improvement Insights Dashboard** - Generates reports highlighting patterns, inefficiencies, and specific areas for improvement
@@ -40,7 +40,7 @@
 ### User Journey
 
 1. User installs and configures the MCP server in Claude Desktop settings
-2. They use Claude Desktop normally - the MCP server silently captures all interactions
+2. They use Claude Desktop normally and explicitly log prompts they want analyzed using the MCP server tools
 3. Periodically (or on-demand), they access the analytics dashboard to review their prompt quality metrics
 4. The system highlights specific patterns (e.g., "Your prompts lack context 40% of the time") with examples
 5. User reviews personalized suggestions and applies improvements to future prompts
@@ -85,7 +85,7 @@
 
 > - Main Interface: Analytics dashboard showing prompt quality metrics, trends, and insights
 > - Input Methods:
->   - Automatic capture from Claude Desktop
+>   - Manual logging through MCP tools
 >   - Manual rating system for response quality
 >   - Search/filter for prompt history
 > - Output/Display:
@@ -127,7 +127,7 @@
 ### Technical Constraints
 
 > - Maximum file size: Database may grow large (implement rotation/archiving after 1GB)
-> - Performance requirements: Must not add more than 50ms latency to Claude interactions
+> - Performance requirements: Logging operations must be fast and non-blocking
 > - Browser support: Modern browsers only for dashboard (Chrome, Firefox, Safari, Edge)
 > - No Apple Developer license for notarization: Understood ✓
 
@@ -184,7 +184,7 @@
 > - [x] Provides at least 5 actionable insights within first week of usage
 > - [x] Dashboard loads in under 2 seconds with 10,000+ stored prompts
 > - [x] Quality scores correlate with user's subjective assessment (>70% accuracy)
-> - [x] Zero impact on Claude Desktop performance
+> - [x] Minimal impact on workflow through optional logging tools
 
 ### User Feedback Plans
 
@@ -203,14 +203,14 @@
 ### Special Considerations
 
 > - **Privacy First**: All data must remain local with clear data management options
-> - **Non-Intrusive**: Must not interfere with natural Claude Desktop usage
+> - **User-Controlled**: Users explicitly choose what to log without any automatic interception
 > - **Extensible**: Architecture should allow for custom analysis rules and metrics
 > - **Integration Ready**: Should be able to connect with your existing Improver Electron app for advanced workshopping
 > - **MCP Compliance**: Must follow all MCP protocol specifications and best practices
 
 ### Questions for Claude
 
-> 1. What's the best approach for implementing real-time prompt quality scoring without adding latency?
+> 1. What's the best approach for implementing prompt quality scoring on logged prompts?
 > 2. Should the initial version include the ability to modify prompts before sending, or focus purely on analysis?
 > 3. What metrics would be most valuable for measuring prompt quality beyond the obvious (length, structure, clarity)?
 > 4. How can we best handle storing and analyzing multi-turn conversations vs single prompts?
@@ -220,7 +220,7 @@
 
 ## Implementation Priorities
 
-1. **Phase 1 (Week 1)**: Core MCP server with prompt interception and storage
+1. **Phase 1 (Week 1)**: Core MCP server with prompt logging tools and storage
 2. **Phase 2 (Week 2)**: Basic web dashboard with prompt history and search
 3. **Phase 3 (Week 3)**: Quality analysis engine and metrics
 4. **Phase 4 (Week 4)**: Insights generation and improvement suggestions

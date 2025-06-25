@@ -50,9 +50,9 @@ interface MCPServer {
   handleRequest(request: MCPRequest): Promise<MCPResponse>;
   shutdown(): Promise<void>;
 
-  // Prompt Interception
-  interceptPrompt(prompt: PromptData): Promise<PromptData>;
-  interceptResponse(response: ResponseData): Promise<void>;
+  // Prompt Logging Tools
+  logPrompt(prompt: PromptData): Promise<string>;
+  logResponse(response: ResponseData): Promise<void>;
 }
 
 // MCP Protocol Messages
@@ -76,9 +76,9 @@ interface ResponseData {
 **Key Features:**
 
 - Implements MCP protocol specification
-- Minimal latency (<50ms) for prompt processing
+- Fast logging operations (<50ms) for prompt processing
 - Non-blocking architecture using async/await
-- Graceful error handling to never interrupt Claude
+- Graceful error handling with optional logging
 
 ### 2.2 Database Schema
 
@@ -208,15 +208,13 @@ class TechniqueSelector {
 // src/dashboard/server.ts
 interface DashboardServer {
   // API Endpoints
-  GET /api/prompts          // List prompts with pagination
+  GET /api/prompts          // List logged prompts with pagination
   GET /api/prompts/:id      // Get specific prompt details
   GET /api/analytics        // Get analytics data
   GET /api/insights         // Get current insights
   GET /api/metrics          // Get historical metrics
   POST /api/prompts/:id/rate // Rate a response
-
-  // WebSocket for real-time updates
-  WS /ws/live              // Live prompt feed
+  POST /api/tools/log       // MCP tool for logging prompts
 }
 
 // Frontend Structure
@@ -271,10 +269,10 @@ const schedule = {
 class MCPProtocolHandler {
   async handleMessage(message: MCPMessage): Promise<MCPResponse> {
     switch (message.type) {
-      case "prompt":
-        return this.handlePrompt(message);
-      case "response":
-        return this.handleResponse(message);
+      case "log_prompt":
+        return this.handleLogPrompt(message);
+      case "log_response":
+        return this.handleLogResponse(message);
       case "config":
         return this.handleConfig(message);
       default:
@@ -282,7 +280,7 @@ class MCPProtocolHandler {
     }
   }
 
-  private async handlePrompt(message: PromptMessage): Promise<MCPResponse> {
+  private async handleLogPrompt(message: LogPromptMessage): Promise<MCPResponse> {
     // 1. Store prompt
     const promptId = await this.storage.savePrompt(message);
 
@@ -291,14 +289,8 @@ class MCPProtocolHandler {
       this.storage.updatePromptAnalysis(promptId, analysis);
     });
 
-    // 3. Optionally enhance (if enabled)
-    if (this.config.enhancePrompts) {
-      const enhanced = await this.enhancer.enhance(message.content);
-      return { type: "prompt", content: enhanced, original: message.content };
-    }
-
-    // 4. Return original (no modification)
-    return { type: "prompt", content: message.content };
+    // 3. Return confirmation
+    return { type: "success", promptId, message: "Prompt logged successfully" };
   }
 }
 ```
@@ -312,8 +304,8 @@ class MCPProtocolHandler {
   "version": "1.0.0",
   "protocol": "mcp/1.0",
   "capabilities": {
-    "intercept": true,
-    "modify": true,
+    "logging": true,
+    "analysis": true,
     "store": true
   },
   "settings": {
@@ -352,7 +344,7 @@ interface SecurityManager {
 - **Local-only storage**: No cloud sync
 - **Data retention policies**: Automatic cleanup after X days
 - **Export controls**: User can export/delete all data
-- **Opt-in enhancement**: Prompt modification off by default
+- **Explicit logging**: Users choose what to log
 
 ## 5. Performance Optimization
 
@@ -429,8 +421,8 @@ class ErrorHandler {
     }
 
     // 3. Never interrupt Claude Desktop
-    if (context.source === "prompt-interception") {
-      return; // Fail silently
+    if (context.source === "prompt-logging") {
+      return; // Log errors silently
     }
 
     // 4. Notify dashboard if connected
